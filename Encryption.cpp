@@ -19,7 +19,7 @@ Encryption::Encryption(EncryptionType type, string filepath)
 
     // Number range to generate from.
     int minimum = 1;
-    int maximum = 9999;
+    int maximum = type == EncryptionType::CAESAR ? 25 : 9999;
 
     // Create a uniform_int_distribution to generate random integers within the specified range.
     uniform_int_distribution<int> dist(minimum, maximum);
@@ -34,6 +34,16 @@ Encryption::Encryption(EncryptionType type, string filepath, int key)
     this->filepath = std::move(filepath);
     this->key = key;
     this->c = '\0';
+
+    // Ensure that the key is valid for the given encryption method.
+    if (type == EncryptionType::CAESAR)
+    {
+        if (!(key >= 1 && key <= 25))
+        {
+            cerr << "Your key must be between 1 and 25 for the Caesar cipher encryption.";
+            exit(-1);
+        }
+    }
 }
 
 void Encryption::encrypt()
@@ -46,6 +56,10 @@ void Encryption::encrypt()
             break;
         case EncryptionType::XOR:
             encryptXOR();
+
+            break;
+        case EncryptionType::CAESAR:
+            encryptCaesar();
 
             break;
     }
@@ -61,6 +75,10 @@ void Encryption::decrypt()
             break;
         case EncryptionType::XOR:
             decryptXOR();
+
+            break;
+        case EncryptionType::CAESAR:
+            decryptCaesar();
 
             break;
     }
@@ -180,4 +198,110 @@ void Encryption::encryptXOR() const
 void Encryption::decryptXOR()
 {
     encryptXOR();
+}
+
+void Encryption::encryptCaesar() const
+{
+    // Read the file.
+    string contents;
+
+    // Open the file in read mode (ios::in).
+    ifstream file(filepath, ios::in);
+
+    // Ensure that the file is open.
+    if (!file.is_open())
+    {
+        cerr << "Failed to open file." << endl;
+        return;
+    }
+
+    // Actually read the file contents.
+    ostringstream stringStream;
+    stringStream << file.rdbuf();
+
+    // Close the file.
+    file.close();
+
+    // Set the contents variable to the file contents.
+    contents = stringStream.str();
+
+    // Encrypt the file contents using the Caesar cipher.
+    string encryptedContents;
+
+    // Loop through the characters and apply the Caesar cipher to each if applicable.
+    for (char character : contents)
+    {
+        int upperShift = 65;
+        int lowerShift = 97;
+
+        if (isalpha(character))
+        {
+            // Apply the Caesar cipher to the specific character.
+            int shift = isupper(character) ? upperShift : lowerShift;
+            encryptedContents += char(int(character + key - shift) % 26 + shift);
+        }
+        else
+        {
+            // The character is not in the alphabet, so just add it to the string as it is.
+            encryptedContents += character;
+        }
+    }
+
+    // Finally, write the newly encrypted contents back to the file, and close the file.
+    ofstream outStream(filepath, ios::trunc);
+    outStream << encryptedContents;
+    outStream.close();
+}
+
+void Encryption::decryptCaesar() const
+{
+    // Read the file.
+    string contents;
+
+    // Open the file in read mode (ios::in).
+    ifstream file(filepath, ios::in);
+
+    // Ensure that the file is open.
+    if (!file.is_open())
+    {
+        cerr << "Failed to open file." << endl;
+        return;
+    }
+
+    // Actually read the file contents.
+    ostringstream stringStream;
+    stringStream << file.rdbuf();
+
+    // Close the file.
+    file.close();
+
+    // Set the contents variable to the file contents.
+    contents = stringStream.str();
+
+    // Encrypt the file contents using the Caesar cipher.
+    string encryptedContents;
+
+    // Loop through the characters and apply the Caesar cipher to each if applicable.
+    for (char character : contents)
+    {
+        int upperShift = 65;
+        int lowerShift = 97;
+
+        if (isalpha(character))
+        {
+            // Apply the Caesar cipher to the specific character.
+            int shift = isupper(character) ? upperShift : lowerShift;
+            encryptedContents += char(int(character + (26 - key) - shift) % 26 - shift);
+        }
+        else
+        {
+            // The character is not in the alphabet, so just add it to the string as it is.
+            encryptedContents += character;
+        }
+    }
+
+    // Finally, write the newly encrypted contents back to the file, and close the file.
+    ofstream outStream(filepath, ios::trunc);
+    outStream << encryptedContents;
+    outStream.close();
 }

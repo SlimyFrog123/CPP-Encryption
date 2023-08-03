@@ -16,7 +16,8 @@ using namespace std;
 enum EncryptionType
 {
     ADDITIVE,
-    XOR
+    XOR,
+    CAESAR
 };
 
 class Encryption
@@ -31,6 +32,10 @@ private:
     // XOR encryption.
     void encryptXOR() const;
     void decryptXOR();
+
+    // Caesar cypher encryption.
+    void encryptCaesar() const;
+    void decryptCaesar() const;
 
 public:
     EncryptionType type;

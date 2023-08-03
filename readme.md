@@ -9,12 +9,12 @@ actual library once I get the chance to, as well as uploading the releases.
 CPP-Encryption currently supports the following encryption methods:
  - Additive encryption
  - XOR encryption
+ - Caesar cipher encryption
 
 ### To-do
 - Add additional encryption methods:
-   1. [ ] Caesar Cypher
-   2. [ ] Vigenère Cipher
-   3. [ ] Transposition Cipher
+   1. [ ] Vigenère cipher
+   2. [ ] Transposition cipher
 
 ### Additional Notes
 I likely will not any very complex encryption methods, as that would require a lot of time and effort on my end, but I
