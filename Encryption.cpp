@@ -173,7 +173,7 @@ void Encryption::encryptXOR() const
     }
 
     // Write the data back to the file.
-    outputFile.write(data.c_str(), data.length());
+    outputFile.write(data.c_str(), (streamsize)data.length());
     outputFile.close();
 }
 
